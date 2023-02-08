@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
@@ -24,10 +25,76 @@ class _VideoViewState extends State<VideoView> {
 
   ChewieController? _chewieController;
 
+
+  //TODO: BANNER AD
+  late BannerAd bannerAd;
+  var adUnitId = "ca-app-pub-8902708450041638/4424297293"; //testADID
+
+  bool isAdLoaded = false;
+
+  initBannerAd() async {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: adUnitId,
+      listener: BannerAdListener(
+        onAdLoaded: (ad){
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad,error){
+          ad.dispose();
+          print(error);
+        },
+
+
+      ),
+      request: AdRequest(
+
+      ),
+    );
+
+    bannerAd.load();
+  }
+
+
+  //TODO: INTERSTITIAL AD
+  late InterstitialAd interstitialAd;
+  var interstitialId = "ca-app-pub-8902708450041638/8164231751";
+
+  bool isAdInterstitialLoaded = true;
+
+  initInterstitialAd() {
+    InterstitialAd.load(
+
+      adUnitId: interstitialId,
+      request: AdRequest(),
+
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad){
+          interstitialAd = ad;
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: ((error){
+          interstitialAd.dispose();
+          print(error);
+        }),
+
+      ),
+
+    );
+  }
+
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initBannerAd();
     _chewieController = ChewieController(
       videoPlayerController: VideoPlayerController.file(
         File(
@@ -51,6 +118,7 @@ class _VideoViewState extends State<VideoView> {
         );
       })
     );
+    initInterstitialAd();
   }
 
   @override
@@ -59,13 +127,28 @@ class _VideoViewState extends State<VideoView> {
     super.dispose();
     _chewieController!.pause();
     _chewieController!.dispose();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Chewie(
-        controller: _chewieController!,
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.45,
+            width: double.infinity,
+            child: Chewie(
+              controller: _chewieController!,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(left: 30),
@@ -82,17 +165,33 @@ class _VideoViewState extends State<VideoView> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Video saved to gallery"),),
                         );
+                        Future.delayed(const Duration(seconds: 1,),(){
+                          interstitialAd.show();
+                        });
                       });
                       break;
                     case 1:
                       log("share video");
                       FlutterNativeApi.shareImage(widget.videoPath);
+                      Future.delayed(const Duration(seconds: 1,),(){
+                        interstitialAd.show();
+                      });
                       break;
                   }
                 },
                 child: buttonList[index]);
           }),
         ),
+      ),
+
+      bottomNavigationBar: Container(
+        height:  bannerAd.size.height.toDouble(),
+        color: Colors.black,
+        child: isAdLoaded ? SizedBox(
+          height: bannerAd.size.height.toDouble(),
+          width: bannerAd.size.width.toDouble(),
+          child: AdWidget(ad: bannerAd,),
+        ) :const  SizedBox(),
       ),
     );
   }

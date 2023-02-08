@@ -24,6 +24,7 @@ class _VideoTabState extends State<VideoTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const  Color(0xFFfcb900).withOpacity(0.5),
       body: Consumer<GetStatusesProvider>(builder: (context, file, child) {
         if (_isFetched == false) {
           file.getStatus(".mp4");
@@ -55,12 +56,13 @@ class _VideoTabState extends State<VideoTab> {
           ),
         )
             : Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.only(left: 25,right: 25,bottom: 20),
           child: GridView(
+            physics: const BouncingScrollPhysics(parent: BouncingScrollPhysics()),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisCount: 3,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
             ),
             children: List.generate(file.getVideos.length, (index) {
               final data = file.getVideos[index];

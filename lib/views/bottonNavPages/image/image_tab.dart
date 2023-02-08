@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_saver/providers/get_status_provider.dart';
 import 'package:whatsapp_saver/views/bottonNavPages/image/image_view.dart';
@@ -19,9 +20,15 @@ class ImageTab extends StatefulWidget {
 class _ImageTabState extends State<ImageTab> {
   bool _isFetched = false;
 
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const  Color(0xFFfcb900).withOpacity(0.5),
       body: Consumer<GetStatusesProvider>(builder: (context, file, child) {
         if (_isFetched == false) {
           file.getStatus(".jpg");
@@ -53,12 +60,13 @@ class _ImageTabState extends State<ImageTab> {
                 ),
               )
             : Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.only(left: 25,right: 25,bottom: 20),
                 child: GridView(
+                  physics: const BouncingScrollPhysics(parent: BouncingScrollPhysics()),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
                   ),
                   children: List.generate(file.getImages.length, (index) {
                     final data = file.getImages[index];
@@ -80,7 +88,9 @@ class _ImageTabState extends State<ImageTab> {
                             fit: BoxFit.cover
                           ),
                             color: Colors.amber,
-                            borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+
+                        ),
                       ),
                     );
                   }),

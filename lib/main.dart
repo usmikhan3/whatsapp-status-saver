@@ -27,4 +27,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
+//keytool -genkey -v -keystore c:\Users\USER\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key

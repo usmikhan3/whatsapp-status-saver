@@ -40,9 +40,10 @@ dependencies:
   image_gallery_saver: ^1.7.1
   video_player: ^2.2.3
   chewie: ^1.1.0
-  share_plus: ^4.5.3
   flutter_native_api: ^0.0.1
   video_thumbnail: ^0.5.2
+  url_launcher: ^6.0.20
+  google_mobile_ads: 1.0.0
 
 dev_dependencies:
   flutter_test:
